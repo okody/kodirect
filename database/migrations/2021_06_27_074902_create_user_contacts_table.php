@@ -16,8 +16,8 @@ class CreateUserContactsTable extends Migration
         Schema::create('user_contacts', function (Blueprint $table) {
             $table->increments("id");
             $table->string("phone");
-            $table->index('useri_id');
-            $table->foreign('useri_id')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +29,9 @@ class CreateUserContactsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_contacts');
+        Schema::dropIfExists('user_contacts',  function (Blueprint $table) {
+            $table->dropForeign('user_id');
+            $table->dropIndex('user_id');
+        });
     }
 }

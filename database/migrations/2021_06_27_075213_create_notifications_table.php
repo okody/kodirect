@@ -19,7 +19,7 @@ class CreateNotificationsTable extends Migration
             $table->mediumText("url");
             $table->mediumText("Content");
             $table->string("Type");
-            $table->index('useri_id');
+            $table->integer('useri_id');
             $table->foreign('useri_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
@@ -32,6 +32,9 @@ class CreateNotificationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('notifications',  function (Blueprint $table) {
+            $table->dropForeign('user_id');
+            $table->dropIndex('user_id');
+        });
     }
 }

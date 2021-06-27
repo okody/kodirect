@@ -17,8 +17,8 @@ class CreateTageFollowersTable extends Migration
             $table->increments("id");
             $table->index('TageID');
             $table->foreign('TageID')->references('id')->on('tages')->onDelete('cascade');
-            $table->index('UserID');
-            $table->foreign('UserID')->references('id')->on('users')->onDelete('cascade');
+            $table->index('user_id');
+            $table->foreign('useri_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

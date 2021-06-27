@@ -15,10 +15,10 @@ class CreatePostTagesTable extends Migration
     {
         Schema::create('post_tages', function (Blueprint $table) {
             $table->increments("id");
-            $table->index('TageID');
-            $table->foreign('TageID')->references('id')->on('tages')->onDelete('cascade');
-            $table->index('PostID');
-            $table->foreign('PostID')->references('id')->on('posts')->onDelete('cascade');
+            $table->index('tage_id');
+            $table->foreign('tage_id')->references('id')->on('tages')->onDelete('cascade');
+            $table->index('post_id');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,7 +30,12 @@ class CreatePostTagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_tages');
+        Schema::dropIfExists('post_tages' , function(Blueprint $table) {
+            $table->dropForeign('tage_id');
+            $table->dropIndex('tage_id');
+            $table->dropForeign('post_id');
+            $table->dropIndex('post_id');
+        });
         
     }
 }

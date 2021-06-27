@@ -15,12 +15,12 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->increments("id");
-            // $table->string("title");
-            // $table->mediumText("url");
-            // $table->mediumText("Content");
-            // $table->string("Type");
-            // $table->index('UserID');
-            // $table->foreign('UserID')->references('id')->on('users')->onDelete('cascade');
+            $table->string("title");
+            $table->mediumText("url");
+            $table->mediumText("Content");
+            $table->string("Type");
+            $table->index('UserID');
+            $table->foreign('UserID')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

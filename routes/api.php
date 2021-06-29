@@ -23,7 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Controllers\Api"], function () {
     Route::GET('posts', "PostController@index");
 
-    Route::group(["prefix" => "/User", "namespace" => "App\Http\Controllers\Api"], function () {
+    Route::group(["prefix" => "/user", "namespace" => "App\Http\Controllers\Api"], function () {
         Route::post("/create" , "UserController@create");
     });
 });

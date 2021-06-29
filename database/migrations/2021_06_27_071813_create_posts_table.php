@@ -17,7 +17,7 @@ class CreatePostsTable extends Migration
             $table->increments("id");
             $table->mediumText("imageUrl");
             $table->string("format");
-            $table->string("title");
+            $table->tinyText("title");
             $table->mediumText("comment")->nullable();
             $table->boolean("hidden")->default(false);
             $table->integer('user_id');

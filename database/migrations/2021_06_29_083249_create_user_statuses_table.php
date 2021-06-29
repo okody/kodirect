@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTageFollowersTable extends Migration
+class CreateUserStatusesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateTageFollowersTable extends Migration
      */
     public function up()
     {
-        Schema::create('tage_followers', function (Blueprint $table) {
+        Schema::create('user_statuses', function (Blueprint $table) {
             $table->increments("id");
-            $table->integer('tage_id');
-            $table->foreign('tage_id')->references('id')->on('tages')->onDelete('cascade');
+            $table->tinyText("state");
+            $table->boolean("isActive");
             $table->integer('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
@@ -30,11 +30,9 @@ class CreateTageFollowersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tage_followers',  function (Blueprint $table) {
+        Schema::dropIfExists('user_statuses', function (Blueprint $table) {
             $table->dropForeign('user_id');
             $table->dropIndex('user_id');
-            $table->dropForeign('tage_id');
-            $table->dropIndex('tage_id');
         });
     }
 }

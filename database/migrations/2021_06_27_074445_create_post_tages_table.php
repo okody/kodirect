@@ -15,9 +15,9 @@ class CreatePostTagesTable extends Migration
     {
         Schema::create('post_tages', function (Blueprint $table) {
             $table->increments("id");
-            $table->integer('tage_id');
+            $table->integer('tage_id')->index();
             $table->foreign('tage_id')->references('id')->on('tages')->onDelete('cascade');
-            $table->integer('post_id');
+            $table->integer('post_id')->index();
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });

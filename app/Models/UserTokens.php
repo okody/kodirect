@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class UserTokens extends Model
 {
     use HasFactory;
+
+
+    protected $fillable = [
+        'platform',
+        'token',
+        "user_id"
+    ];
+
+
+
 }

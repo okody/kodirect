@@ -14,10 +14,10 @@ class CreateUserStatusesTable extends Migration
     public function up()
     {
         Schema::create('user_statuses', function (Blueprint $table) {
-            $table->increments("id");
+            $table->id();
             $table->tinyText("state");
             $table->boolean("isActive");
-            $table->integer('user_id');
+            $table->integer('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

@@ -20,7 +20,7 @@ class CreatePostsTable extends Migration
             $table->tinyText("title");
             $table->mediumText("comment")->nullable();
             $table->boolean("hidden")->default(false);
-            $table->integer('user_id');
+            $table->integer('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

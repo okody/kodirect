@@ -17,9 +17,9 @@ class CreateNotificationsTable extends Migration
             $table->increments("id");
             $table->string("title");
             $table->mediumText("url");
-            $table->mediumText("Content");
+            $table->mediumText("content");
             $table->string("Type");
-            $table->integer('useri_id');
+            $table->integer('useri_id')->index();
             $table->foreign('useri_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

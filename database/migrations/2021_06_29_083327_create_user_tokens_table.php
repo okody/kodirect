@@ -15,9 +15,9 @@ class CreateUserTokensTable extends Migration
     {
         Schema::create('user_tokens', function (Blueprint $table) {
             $table->increments("id");
-            $table->mediumText("token");
-            $table->string("platform");
-            $table->integer('user_id');
+            $table->mediumText("token")->nullable();
+            $table->string("platform")->nullable();
+            $table->integer('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

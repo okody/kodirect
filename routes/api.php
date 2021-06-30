@@ -21,10 +21,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Controllers\Api"], function () {
-    Route::GET('posts', "PostController@index");
+    Route::get('posts', "PostController@index");
 
-    Route::group(["prefix" => "/user"], function () {
-        Route::post("/create" , "UserController@create");
+    Route::group(["prefix" => "user"], function () {
+
+
+        // Route::get("/{id}" , "UserController@get_user");
+        Route::post("create" , "UserController@create");
+        
+        // Route::delete("/delete" , "UserController@create");
     });
 });
 
@@ -36,5 +41,5 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
 
 
 Route::get('/', function () {
-    return "sorry you are not allowed";
+    return ['message' =>'you are not authrized to access this api' , "status" => false];
 })->name("home");

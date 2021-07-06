@@ -13,12 +13,9 @@ class CreateTageFollowersTable extends Migration
      */
     public function up()
     {
-        Schema::create('tage_followers', function (Blueprint $table) {
-            $table->increments("id");
-            $table->integer('tage_id')->index();
-            $table->foreign('tage_id')->references('id')->on('tages')->onDelete('cascade');
-            $table->integer('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        Schema::create('user_tage', function (Blueprint $table) {
+            $table->foreignId('tage_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
@@ -30,7 +27,7 @@ class CreateTageFollowersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tage_followers',  function (Blueprint $table) {
+        Schema::dropIfExists('user_tage',  function (Blueprint $table) {
             $table->dropForeign('user_id');
             $table->dropIndex('user_id');
             $table->dropForeign('tage_id');

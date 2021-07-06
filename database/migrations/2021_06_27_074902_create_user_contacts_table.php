@@ -16,8 +16,7 @@ class CreateUserContactsTable extends Migration
         Schema::create('user_contacts', function (Blueprint $table) {
             $table->increments("id");
             $table->string("phone");
-            $table->integer('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

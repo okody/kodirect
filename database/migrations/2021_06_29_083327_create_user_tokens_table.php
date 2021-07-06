@@ -17,8 +17,7 @@ class CreateUserTokensTable extends Migration
             $table->increments("id");
             $table->mediumText("token")->nullable();
             $table->string("platform")->nullable();
-            $table->integer('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

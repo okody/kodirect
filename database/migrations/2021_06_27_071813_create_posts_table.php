@@ -20,8 +20,7 @@ class CreatePostsTable extends Migration
             $table->tinyText("title");
             $table->mediumText("comment")->nullable();
             $table->boolean("hidden")->default(false);
-            $table->integer('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
@@ -34,8 +33,6 @@ class CreatePostsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('posts', function (Blueprint $table) {
-            $table->dropForeign('user_id');
-            $table->dropIndex('user_id');
         });
     }
 }

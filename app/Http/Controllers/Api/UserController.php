@@ -22,6 +22,19 @@ class UserController extends Controller
 
     public function index()
     {
+
+        $message = "all users have been brought successfluy";
+        $status = true;
+
+        try {
+            $users = User::with("posts")->get();
+        } catch (\Throwable $th) {
+            //throw $th;
+            $message = "error: $th";
+            $status = false;
+        }
+
+        return $this->returnForm($message, $status, $users);
     }
 
     public function create(Request $request)
@@ -35,7 +48,8 @@ class UserController extends Controller
                 "email" => $request->data["email"],
                 "userName" => $request->data["userName"],
                 "userID" => $request->data["userID"],
-                "name" => $request->data["name"]
+                "name" => $request->data["name"],
+
             ]);
 
             $allTokens = [];
@@ -63,7 +77,7 @@ class UserController extends Controller
             );
         } catch (\Throwable $th) {
             $message  = "$th";
-            return $th;
+
             $status = false;
         }
 
@@ -74,23 +88,26 @@ class UserController extends Controller
         return $this->returnForm($message, $status, $user);
     }
 
-    public function get_user($id)
+    public function get_user($userID)
     {
 
-        $message = "user with id:$id found succuflly";
+        $message = "user with id:$userID found succuflly";
         $status = true;
 
-        $user =  User::find($id);
-        if ($user == null) {
+        $user =  User::where("userID", $userID)->with("status")->with("tokens")->with("posts")->first();
+        if (!$user) {
             $status = false;
-            $message = "sorry , no user with id:$id";
+            $message = "sorry , no user with id:$userID";
         }
 
-        $userStatus = UserStatus::find($id);
-        $user->status = $userStatus;
 
-        $tokens = UserTokens::where("user_id" , $id);
+        return $this->returnForm($message, $status, $user);
+    }
 
-        return $this->returnForm($message, $status, $tokens);
+
+    // =============================================================================================
+    public function getUserID($userID)
+    {
+        return User::where("userID", $userID)->first()->id;
     }
 }

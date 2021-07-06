@@ -15,9 +15,9 @@ class CreateTagesTable extends Migration
     {
         Schema::create('tages', function (Blueprint $table) {
             $table->increments("id");
-            $table->string("Name");
-            $table->mediumText("ImageUrl");
-            $table->mediumText("BackgroundUrl");
+            $table->string("name");
+            $table->mediumText("imageUrl")->nullable();
+            $table->mediumText("backgroundUrl")->nullable();
             $table->timestamps();
         });
     }

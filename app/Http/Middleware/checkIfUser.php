@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class checkApiPassword
+class checkIfUser
 {
     /**
      * Handle an incoming request.
@@ -17,12 +17,10 @@ class checkApiPassword
     public function handle(Request $request, Closure $next)
     {
 
+        if ($request->role != "user") {
 
-        if ($request->apikey != env("apiPassword", "CCIgyp4OYlm2mnjr3oloJU")) {
-
-            return redirect()->route("ApiAuthorization");
+            return  redirect()->route("RoleAuthorization");
         }
-        
         return $next($request);
     }
 }

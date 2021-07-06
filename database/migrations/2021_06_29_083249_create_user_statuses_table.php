@@ -17,8 +17,7 @@ class CreateUserStatusesTable extends Migration
             $table->id();
             $table->tinyText("state");
             $table->boolean("isActive");
-            $table->integer('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

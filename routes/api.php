@@ -16,20 +16,44 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Controllers\Api"], function () {
-    Route::get('posts', "PostController@index");
 
     Route::group(["prefix" => "user"], function () {
 
+        Route::get("/", "UserController@index");
+        Route::get("/{userID}", "UserController@get_user");
+        Route::post("create", "UserController@create");
+        Route::delete("/delete/{id}", "UserController@create");
+        Route::put("/update/{id}", "UserController@create");
+    });
 
-        // Route::get("/{id}" , "UserController@get_user");
-        Route::post("create" , "UserController@create");
-        
-        // Route::delete("/delete" , "UserController@create");
+
+    Route::group(["prefix" => "post"], function () {
+
+        Route::get("/", "PostController@index");
+        Route::get("/tage/{tage}", "PostController@getByTage");
+
+
+
+
+        // Route::get("/{id}", "PostController@get_post");
+        Route::post("create", "PostController@create");
+        // Route::delete("/delete/{id}", "PostController@create");
+        // Route::put("/update/{id}", "PostController@create");
+
+        Route::group(["prefix" => "/{id}/comment"], function () {
+            Route::post("/create", "CommentController@create");
+        });
+
+
+        Route::group(["prefix" => "/{id}/like"], function () {
+            Route::post("/create", "LikeController@create");
+        });
+
     });
 });
 
@@ -40,6 +64,10 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
 
 
 
-Route::get('/', function () {
-    return ['message' =>'you are not authrized to access this api' , "status" => false];
-})->name("home");
+Route::get('/Api-Authorization', function () {
+    return ['message' => 'you are not authorized to use this api', "status" => false];
+})->name("ApiAuthorization");
+
+Route::get('/Role-Authorization', function () {
+    return ['message' => 'you are not authorized to use this data', "status" => false];
+})->name("RoleAuthorization");

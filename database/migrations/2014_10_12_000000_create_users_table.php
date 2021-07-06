@@ -17,8 +17,10 @@ class CreateUsersTable extends Migration
             $table->increments("id");
             $table->text("userID");
             $table->tinyText("name")->nullable();
+            $table->text("profliePicture")->nullable();
             $table->mediumText("userName");
             $table->mediumText("email");
+            $table->string("role")->default("user");
             $table->rememberToken();
             $table->timestamps();
         });

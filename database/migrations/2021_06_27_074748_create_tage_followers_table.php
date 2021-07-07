@@ -14,6 +14,7 @@ class CreateTageFollowersTable extends Migration
     public function up()
     {
         Schema::create('user_tage', function (Blueprint $table) {
+            $table->increments("id");
             $table->foreignId('tage_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();

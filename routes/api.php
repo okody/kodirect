@@ -35,25 +35,37 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
     Route::group(["prefix" => "post"], function () {
 
         Route::get("/", "PostController@index");
-        Route::get("/tage/{tage}", "PostController@getByTage");
 
-
-
-
-        // Route::get("/{id}", "PostController@get_post");
+        Route::get("/{post_id}", "PostController@get_post");
         Route::post("create", "PostController@create");
-        // Route::delete("/delete/{id}", "PostController@create");
-        // Route::put("/update/{id}", "PostController@create");
+        Route::delete("/delete/{post_id}", "PostController@delete");
+        Route::put("/update/{post_id}", "PostController@update");
 
-        Route::group(["prefix" => "/{id}/comment"], function () {
+
+        Route::group(["prefix" => "/{post_id}/comment"], function () {
+            Route::get("/", "CommentController@index");
+            Route::get("/{comment_id}", "CommentController@get_comment");
             Route::post("/create", "CommentController@create");
+
+            Route::put("/update/{comment_id}", "CommentController@update");
+            Route::delete("/delete/{comment_id}", "CommentController@delete");
         });
 
 
-        Route::group(["prefix" => "/{id}/like"], function () {
+        Route::group(["prefix" => "/{post_id}/like"], function () {
+            Route::get("/", "LikeController@index");
+            Route::get("/{like_id}", "LikeController@get_like");
             Route::post("/create", "LikeController@create");
+
+            Route::delete("/delete/{like_id}", "LikeController@delete");
         });
 
+
+
+        Route::group(["prefix" => "/{post_id}/view"], function () {
+            Route::get("/", "ViewController@index");
+            Route::post("/create", "ViewController@create");
+        });
     });
 });
 

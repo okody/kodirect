@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model
+class View extends Model
 {
     use HasFactory;
 
-    protected $table = "post_comment";
+    protected $table = "post_view";
+
 
     protected $fillable = [
-        "content",
         "user_id",
         "post_id"
     ];

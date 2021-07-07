@@ -19,7 +19,7 @@ class CreateNotificationsTable extends Migration
             $table->mediumText("url");
             $table->mediumText("content");
             $table->string("Type");
-            $table->foreignId('useri_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

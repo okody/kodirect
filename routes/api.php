@@ -24,11 +24,11 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
 
     Route::group(["prefix" => "user"], function () {
 
-        Route::get("/", "UserController@index");
+        // Route::get("/", "UserController@index");
         Route::get("/{userID}", "UserController@get_user");
         Route::post("create", "UserController@create");
-        Route::delete("/delete/{id}", "UserController@create");
-        Route::put("/update/{id}", "UserController@create");
+        // Route::delete("/delete/{id}", "UserController@create");
+        // Route::put("/update/{id}", "UserController@create");
     });
 
 

@@ -94,7 +94,7 @@ class UserController extends Controller
         $message = "user with id:$userID found succuflly";
         $status = true;
 
-        $user =  User::where("userID", $userID)->with("status")->with("tokens")->with("posts")->first();
+        $user =  User::where("userID", $userID)->with("status")->with("tokens")->first();
         if (!$user) {
             $status = false;
             $message = "sorry , no user with id:$userID";

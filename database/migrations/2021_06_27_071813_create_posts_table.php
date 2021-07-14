@@ -20,7 +20,7 @@ class CreatePostsTable extends Migration
             $table->tinyText("title");
             $table->mediumText("comment")->nullable();
             $table->boolean("hidden")->default(false);
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete("set null");
             $table->timestamps();
         });
     }

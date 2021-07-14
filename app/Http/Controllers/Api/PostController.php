@@ -225,9 +225,15 @@ class PostController extends Controller
     {
         $message = 'post belong to tage:$tage have been brought successfully';
         $status = true;
+        $posts = [];
 
 
-        $posts = Post::where("userID", $userID)->with("tages")->with("user:id,name,userName,profliePicture")->get();
+
+        $id = app('App\Http\Controllers\Api\UserController')->getUserID($userID);
+
+
+        $posts =  User::find($id)->posts()->get();
+
 
         return $posts;
     }

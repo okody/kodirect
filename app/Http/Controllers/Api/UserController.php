@@ -27,7 +27,7 @@ class UserController extends Controller
         $status = true;
 
         try {
-            $users = User::with("posts")->get();
+            $users = User::all();
         } catch (\Throwable $th) {
             //throw $th;
             $message = "error: $th";
@@ -94,10 +94,16 @@ class UserController extends Controller
         $message = "user with id:$userID found succuflly";
         $status = true;
 
-        $user =  User::where("userID", $userID)->with("status")->with("tokens")->first();
-        if (!$user) {
+        try {
+
+            $user =  User::where("userID", $userID)->with("status")->with("tokens")->first();
+            if (!$user) {
+                $status = false;
+                $message = "sorry , no user with id:$userID";
+            }
+        } catch (\Throwable $th) {
+            $message = "error: $th";
             $status = false;
-            $message = "sorry , no user with id:$userID";
         }
 
 

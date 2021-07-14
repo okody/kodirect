@@ -31,7 +31,10 @@ class PostController extends Controller
         $message = 'posts belong have been brought successfully';
         $status = true;
 
-        if ($request->tage != null)
+
+        if ($request->userID != null)
+            $posts = $this->get_by_userID($request->userID);
+        else if ($request->tage != null)
             $posts = $this->get_by_tage($request->tage);
         else if ($request->search != null)
             $posts = $this->get_by_search($request->search);
@@ -214,6 +217,17 @@ class PostController extends Controller
 
         foreach ($tages->posts as $post)
             $posts = Post::where("id", $post->id)->with("tages")->get();
+
+        return $posts;
+    }
+
+    public function get_by_userID($userID)
+    {
+        $message = 'post belong to tage:$tage have been brought successfully';
+        $status = true;
+
+
+        $posts = Post::where("userID", $userID)->with("tages")->with("user:id,name,userName,profliePicture")->get();
 
         return $posts;
     }

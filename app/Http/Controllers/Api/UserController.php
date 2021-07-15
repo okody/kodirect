@@ -45,15 +45,15 @@ class UserController extends Controller
 
         try {
             $user = User::create([
-                "email" => $request->data["email"],
-                "userName" => $request->data["userName"],
-                "userID" => $request->data["userID"],
-                "name" => $request->data["name"],
+                "email" => $request->info["email"],
+                "userName" => $request->info["userName"],
+                "userID" => $request->info["userID"],
+                "name" => $request->info["name"],
 
             ]);
 
             $allTokens = [];
-            foreach ($request->data["tokens"] as $token) {
+            foreach ($request->info["tokens"] as $token) {
                 $dbToken =  UserTokens::create(
                     [
 
@@ -70,8 +70,8 @@ class UserController extends Controller
             $userStatus = UserStatus::create(
                 [
                     "id" => $user->id,
-                    "isActive" => $request->data["status"]["isActive"],
-                    "state" => $request->data["status"]["state"],
+                    "isActive" => $request->info["status"]["isActive"],
+                    "state" => $request->info["status"]["state"],
                     "user_id" => $user->id
                 ]
             );
@@ -86,6 +86,18 @@ class UserController extends Controller
 
 
         return $this->returnForm($message, $status, $user);
+    }
+
+    public function update_UserID(Request $request)
+    {
+        $message = "the userID has been assgin successfully";
+        $status = true;
+
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     public function get_user($userID)
@@ -109,6 +121,8 @@ class UserController extends Controller
 
         return $this->returnForm($message, $status, $user);
     }
+
+
 
 
     // =============================================================================================

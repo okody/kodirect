@@ -22,7 +22,7 @@ class CommentController extends Controller
 
 
         try {
-            $comments = Comment::with("user:id,name,userName,profliePicture")->get();
+            $comments = Comment::orderBy('updated_at', "DESC")->with("user:id,name,userName,profliePicture")->get();
         } catch (\Throwable $th) {
             $message = "getting all comments error: $th";
             $status = false;

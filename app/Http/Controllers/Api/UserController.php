@@ -24,24 +24,26 @@ class UserController extends Controller
     {
 
         $message = "all users have been brought successfluy";
-        $status = true;
+        $success = true;
+        $users = [];
 
-        try {
-            $users = User::all();
-        } catch (\Throwable $th) {
-            //throw $th;
-            $message = "error: $th";
-            $status = false;
-        }
+        $users = User::all();
+        // try {
+        //     $users = User::all();
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        //     $message = "error: $th";
+        //     $success = false;
+        // }
 
-        return $this->returnForm($message, $status, $users);
+        return $this->responseForm($message, $success, $users);
     }
 
     public function create(Request $request)
     {
 
         $message = "The user was added to database without any error";
-        $status = true;
+        $success = true;
 
         try {
             $user = User::create([
@@ -78,20 +80,20 @@ class UserController extends Controller
         } catch (\Throwable $th) {
             $message  = "$th";
 
-            $status = false;
+            $success = false;
         }
 
         $user["status"] = $userStatus;
         $user["tokens"] = $allTokens;
 
 
-        return $this->returnForm($message, $status, $user);
+        return $this->responseForm($message, $success, $user);
     }
 
     public function update_UserID(Request $request)
     {
         $message = "the userID has been assgin successfully";
-        $status = true;
+        $success = true;
 
         try {
             //code...
@@ -104,22 +106,22 @@ class UserController extends Controller
     {
 
         $message = "user with id:$userID found succuflly";
-        $status = true;
+        $success = true;
 
         try {
 
             $user =  User::where("userID", $userID)->with("status")->with("tokens")->first();
             if (!$user) {
-                $status = false;
+                $success = false;
                 $message = "sorry , no user with id:$userID";
             }
         } catch (\Throwable $th) {
             $message = "error: $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $user);
+        return $this->responseForm($message, $success, $user);
     }
 
 

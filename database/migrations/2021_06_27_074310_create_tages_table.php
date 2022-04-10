@@ -18,6 +18,7 @@ class CreateTagesTable extends Migration
             $table->string("name");
             $table->mediumText("imageUrl")->nullable();
             $table->mediumText("backgroundUrl")->nullable();
+            $table->mediumText("description")->nullable();
             $table->timestamps();
         });
     }

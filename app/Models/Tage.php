@@ -13,8 +13,14 @@ class Tage extends Model
         'name',
         'imageUrl',
         'bakcgroundUrl',
+        "description",
 
     ];
+
+    public function tages()
+    {
+        return $this->belongsToMany(Tage::class, "user_tage", "user_id", "tage_id");
+    }
 
 
     public function posts()

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use Intervention\Image\Facades\Image;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,11 @@ use App\Http\Controllers\PostController;
 //     return $request->user();
 // });
 
+Route::get('storage/{filename}', function ($filename) {
+    // return storage_path('app/posts/' . $filename);
+    return Image::make(storage_path('app/posts/' . $filename))->response();
+});
+
 Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Controllers\Api"], function () {
 
     Route::group(["prefix" => "user"], function () {
@@ -31,13 +38,22 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
         // Route::put("/update/{id}", "UserController@create");
     });
 
+    Route::group(["prefix" => "tage"], function () {
+
+        Route::get("/", "TageController@index");
+        // Route::get("/{tageID}", "TageController@get_tage");
+        // Route::post("/create", "TageController@create");
+        // Route::delete("/delete/{id}", "TageController@create");
+        // Route::put("/update/{id}", "TageController@create");
+    });
+
 
     Route::group(["prefix" => "post"], function () {
 
         Route::get("/", "PostController@index");
 
         Route::get("/{post_id}", "PostController@get_post");
-        Route::post("create", "PostController@create");
+        Route::post("create", "PostController@create")->middleware("checkUserAuth");
         Route::delete("/delete/{post_id}", "PostController@delete");
         Route::put("/update/{post_id}", "PostController@update");
 
@@ -45,7 +61,7 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
         Route::group(["prefix" => "/{post_id}/comment"], function () {
             Route::get("/", "CommentController@index");
             Route::get("/{comment_id}", "CommentController@get_comment");
-            Route::post("/create", "CommentController@create");
+            Route::post("/create", "CommentController@create")->middleware("checkUserAuth");
 
             Route::put("/update/{comment_id}", "CommentController@update");
             Route::delete("/delete/{comment_id}", "CommentController@delete");
@@ -55,7 +71,7 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
         Route::group(["prefix" => "/{post_id}/like"], function () {
             Route::get("/", "LikeController@index");
             Route::get("/{like_id}", "LikeController@get_like");
-            Route::post("/create", "LikeController@create");
+            Route::post("/create", "LikeController@create")->middleware("checkUserAuth");;
 
             Route::delete("/delete/{like_id}", "LikeController@delete");
         });
@@ -70,16 +86,26 @@ Route::group(["middleware" => "checkApiPassword", "namespace" => "App\Http\Contr
 });
 
 
-
-
-
-
-
-
 Route::get('/Api-Authorization', function () {
-    return ['message' => 'you are not authorized to use this api', "status" => false];
+
+
+
+    return response()->json(
+
+        ['message' => 'you are not authorized to use this api', "success" => false]
+
+    );
 })->name("ApiAuthorization");
 
+
+
+
 Route::get('/Role-Authorization', function () {
-    return ['message' => 'you are not authorized to use this data', "status" => false];
+
+
+    return response()->json(
+
+        ['message' => 'you are not authorized to use this data', "success" => false]
+
+    );
 })->name("RoleAuthorization");

@@ -15,74 +15,77 @@ class CommentController extends Controller
 
     use GeneralTraits;
 
-    public function index()
+    public function index(Request $request)
     {
         $message = "All comment for the post have been brought successfully";
-        $status = true;
+        $success = true;
 
 
         try {
-            $comments = Comment::orderBy('updated_at', "DESC")->with("user:id,name,userName,profliePicture")->get();
+            $comments = Comment::where("post_id", $request->post_id)->orderBy('updated_at', "DESC")->with("user:id,name,userName,profliePicture")->get();
         } catch (\Throwable $th) {
             $message = "getting all comments error: $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $comments);
+        return $this->responseForm($message, $success, $comments);
     }
 
     public function create(Request $request)
     {
 
         $message = "comment have been published successfully";
-        $status = true;
+        $success = true;
+        $comment = null;
+
+
 
 
         try {
             $comment = Comment::create([
                 "content" => $request->data["content"],
-                "user_id" =>  app('App\Http\Controllers\Api\UserController')->getUserID($request->userID),
+                "user_id" =>  app('App\Http\Controllers\Api\UserController')->getUserID($request->data["user_id"]),
                 "post_id" => $request->post_id
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             $message = "Comment creating error: $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $comment);
+        return $this->responseForm($message, $success, $comment);
     }
 
 
     public function get_comment(Request $request)
     {
         $message = "comment of id:$request->comment_id has been brought successfully";
-        $status = true;
+        $success = true;
 
 
         try {
             $comment = Comment::where("id", $request->comment_id)->with("user:id,name,userName,profliePicture")->first();
             if (!$comment) {
                 $message = "There are not comment with id:$request->comment_id";
-                $status = false;
+                $success = false;
             }
         } catch (\Throwable $th) {
             $message = "Error getting comment of id:$request->comment_id \n TheError: $th";
-            $status = false;
+            $success = false;
         }
 
 
 
 
-        return $this->returnForm($message, $status, $comment);
+        return $this->responseForm($message, $success, $comment);
     }
 
     public function update(Request $request)
     {
 
         $message = "comment with id:$request->comment_id has been updated successfully";
-        $status = true;
+        $success = true;
 
 
         try {
@@ -90,8 +93,8 @@ class CommentController extends Controller
 
             if (!$comment) {
                 $message = "There are not comment with id:$request->comment_id";
-                $status = false;
-                return $this->returnForm($message, $status, $comment);
+                $success = false;
+                return $this->responseForm($message, $success, $comment);
             }
 
             DB::table('post_comment')->where("id", $request->comment_id)->update([
@@ -101,18 +104,18 @@ class CommentController extends Controller
             $comment =  Comment::find($request->comment_id)->first();
         } catch (\Throwable $th) {
             $message = "Error updating comment $request->comment_id: \n TheError $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $comment);
+        return $this->responseForm($message, $success, $comment);
     }
 
     public function delete(Request $request)
     {
 
         $message = "comment with id:$request->comment_id has been deleted successfully";
-        $status = true;
+        $success = true;
         $comment = null;
 
 
@@ -121,17 +124,17 @@ class CommentController extends Controller
 
             if (!$comment) {
                 $message = "There are not comment with id:$request->comment_id";
-                $status = false;
-                return $this->returnForm($message, $status, $comment);
+                $success = false;
+                return $this->responseForm($message, $success, $comment);
             }
             Comment::find($request->comment_id)->delete();
         } catch (\Throwable $th) {
             $message = "Error deleted comment $request->comment_id: \n TheError $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $comment);
+        return $this->responseForm($message, $success, $comment);
     }
 
     /// =========================================== Local Functions =============================================

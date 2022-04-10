@@ -18,11 +18,11 @@ class checkApiPassword
     {
 
 
-        if ($request->apikey != env("apiPassword", "CCIgyp4OYlm2mnjr3oloJU")) {
+        if ($request->header('key') != env("apiPassword", "CCIgyp4OYlm2mnjr3oloJU")) {
 
             return redirect()->route("ApiAuthorization");
         }
-        
+
         return $next($request);
     }
 }

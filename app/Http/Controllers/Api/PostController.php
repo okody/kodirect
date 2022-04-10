@@ -12,6 +12,8 @@ use App\Http\Traits\GeneralTraits;
 use App\Models\PostTages;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\UrlGenerator;
 
 class PostController extends Controller
 {
@@ -29,21 +31,21 @@ class PostController extends Controller
 
 
         $message = 'posts belong have been brought successfully';
-        $status = true;
+        $success = true;
 
 
-        if ($request->userID != null)
-            $posts = $this->get_by_userID($request->userID);
+        if ($request->header('user_id') != null)
+            $posts = $this->get_by_userID($request->header('user_id'));
         else if ($request->tage != null)
             $posts = $this->get_by_tage($request->tage);
         else if ($request->search != null)
             $posts = $this->get_by_search($request->search);
         else
-            $posts = Post::orderBy('updated_at', "DESC")->with("user:id,name,userName,profliePicture")->with("tages")->get();
+            $posts = Post::orderBy('updated_at', "DESC")->with("user:id,name,userName,profliePicture")->with("tages")->withCount("views")->with("likes")->get();
 
 
 
-        return $this->returnForm($message, $status, $posts);
+        return $this->responseForm($message, $success, $posts);
     }
 
 
@@ -54,23 +56,40 @@ class PostController extends Controller
     {
 
         $message = "post published successfully";
-        $status = true;
+        $success = true;
         $post = null;
 
 
 
+
+
         try {
+            $imageName = app('App\Http\Controllers\Api\UserController')->getUserID($request->data["user_id"]) . "-" . date("Y-m-d-h-i-s-ms") .   $request->data["format"];
+
+            $image = $request->data["imageUrl"];  // your base64 encoded
+            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+            $path = Storage::disk('local')->put("posts/$imageName", base64_decode($image));
+
+
+
+
+
+            $imageUrl = url("/api/storage/$imageName");
+
+
             $post = Post::create([
-                "imageUrl" => $request->data["imageUrl"],
+                "imageUrl" => $imageUrl,
                 "title" => $request->data["title"],
                 "format" => $request->data["format"],
                 "comment" => $request->data["comment"],
-                "user_id" => app('App\Http\Controllers\Api\UserController')->getUserID($request->userID),
+                "user_id" => app('App\Http\Controllers\Api\UserController')->getUserID($request->data["user_id"]),
             ]);
 
 
 
             $allTages = [];
+
             foreach ($request->data["tages"] as $postTage) {
                 $tage =  app('App\Http\Controllers\Api\TageController')->addNewTageFromNewPost($postTage);
 
@@ -80,13 +99,18 @@ class PostController extends Controller
             }
 
             $post->tages = $allTages;
-        } catch (\Throwable $th) {
-            $message  = "creating post LocoalError: $th";
-            $status = false;
+        } catch (\Exception $e) {
+
+            $message  = "creating post LocoalError $e";
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $post);
+
+
+
+
+        return $this->responseForm($message, $success, $post);
     }
 
 
@@ -94,7 +118,7 @@ class PostController extends Controller
     {
 
         $message = "post with id:$request->post_id has been updated successfully";
-        $status = true;
+        $success = true;
         $post = null;
 
 
@@ -104,14 +128,14 @@ class PostController extends Controller
 
             if ((!$request->data["comment"] && !$request->data["title"])) {
                 $message = "nothing to update at post with id:$request->post_id";
-                $status = false;
-                return $this->returnForm($message, $status, $post);
+                $success = false;
+                return $this->responseForm($message, $success, $post);
             }
 
             if (!$post) {
                 $message = "There are no post with id:$request->post_id";
-                $status = false;
-                return $this->returnForm($message, $status, $post);
+                $success = false;
+                return $this->responseForm($message, $success, $post);
             }
 
             if ($request->data["title"])
@@ -131,11 +155,11 @@ class PostController extends Controller
             $post =  Post::find($request->post_id)->first();
         } catch (\Throwable $th) {
             $message = "Error updated post $request->post_id: \n TheError $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $post);
+        return $this->responseForm($message, $success, $post);
     }
 
 
@@ -143,7 +167,7 @@ class PostController extends Controller
     {
 
         $message = "post with id:$post_id has been deleted successfully";
-        $status = true;
+        $success = true;
         $post = null;
 
 
@@ -152,8 +176,8 @@ class PostController extends Controller
 
             if (!$post) {
                 $message = "There are not post with id:$post_id";
-                $status = false;
-                return $this->returnForm($message, $status, $post);
+                $success = false;
+                return $this->responseForm($message, $success, $post);
             }
             $post->delete();
             app('App\Http\Controllers\Api\CommentController')->deleteWithPostDelete($post_id);
@@ -161,11 +185,11 @@ class PostController extends Controller
             app('App\Http\Controllers\Api\ViewController')->deleteWithPostDelete($post_id);
         } catch (\Throwable $th) {
             $message = "Error deleted post $post_id: \n TheError $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $post);
+        return $this->responseForm($message, $success, $post);
     }
 
 
@@ -206,7 +230,7 @@ class PostController extends Controller
     public function get_by_tage($tage)
     {
         $message = 'post belong to tage:$tage have been brought successfully';
-        $status = true;
+        $success = true;
 
         $tages = [];
 
@@ -216,7 +240,7 @@ class PostController extends Controller
             return [];
 
         foreach ($tages->posts as $post)
-            $posts = Post::where("id", $post->id)->with("tages")->get();
+            $posts = Post::where("id", $post->id)->with("user:id,name,userName,profliePicture")->with("tages")->with("likes")->with("views")->get();
 
         return $posts;
     }
@@ -224,7 +248,7 @@ class PostController extends Controller
     public function get_by_userID($userID)
     {
         $message = 'post belong to tage:$tage have been brought successfully';
-        $status = true;
+        $success = true;
         $posts = [];
 
 
@@ -232,7 +256,7 @@ class PostController extends Controller
         $id = app('App\Http\Controllers\Api\UserController')->getUserID($userID);
 
 
-        $posts =  User::find($id)->posts()->get();
+        $posts = Post::where("user_id", $id)->with("user:id,name,userName,profliePicture")->with("tages")->with("likes")->with("views")->get();
 
 
         return $posts;

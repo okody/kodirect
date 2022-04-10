@@ -18,40 +18,41 @@ class ViewController extends Controller
     public function index()
     {
         $message = "All view for the post have been brought successfully";
-        $status = true;
+        $success = true;
 
 
         try {
             $views = View::all();
         } catch (\Throwable $th) {
             $message = "getting all views error: $th";
-            $status = false;
+            $success = false;
         }
 
 
-        return $this->returnForm($message, $status, $views);
+        return $this->responseForm($message, $success, $views);
     }
 
     public function create(Request $request)
     {
 
         $message = "view have been published successfully";
-        $status = true;
+        $success = true;
         $view = null;
+
+
 
 
         try {
             $view = View::create([
-                "user_id" =>  app('App\Http\Controllers\Api\UserController')->getUserID($request->userID),
+                "user_id" =>  app('App\Http\Controllers\Api\UserController')->getUserID($request->header('user_id')),
                 "post_id" => $request->post_id
             ]);
         } catch (\Throwable $th) {
             $message = "View creating error: $th";
-            $status = false;
+            $success = false;
         }
 
-
-        return $this->returnForm($message, $status, $view);
+        return $this->responseForm($message, $success, $view);
     }
 
 

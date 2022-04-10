@@ -4,9 +4,13 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Http\Traits\GeneralTraits;
 
-class checkIfUser
+
+class checkUserAuth
 {
+    use GeneralTraits;
     /**
      * Handle an incoming request.
      *
@@ -15,12 +19,10 @@ class checkIfUser
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
-    {
-
-        if ($request->role != "user") {
-
-            return  redirect()->route("RoleAuthorization");
-        }
+    {  
+        if(User::where("userID", $request->header('user_id'))->first())
         return $next($request);
+        else
+        return redirect()->route("RoleAuthorization");
     }
 }
